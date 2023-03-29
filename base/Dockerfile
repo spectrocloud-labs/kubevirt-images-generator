@@ -21,8 +21,7 @@ RUN KEY_LOOP="true"; \
 while [ $KEY_LOOP == "true" ]; do \
 	echo "Process extension: $IMAGE_EXTENSION"; \
 	if [ "$IMAGE_EXTENSION" == "qcow2" ] ; then \
-		qemu-img convert -f qcow2 -O raw /disk/$FILE_NAME /disk/$OS_NAME.img; \
-		rm -rf /disk/$FILE_NAME; \
+		mv /disk/$FILE_NAME /disk/$OS_NAME.qcow2; \
 		KEY_LOOP="false"; \
 	elif [ "$IMAGE_EXTENSION" == "vmdk" ] ; then \
 		qemu-img convert -f vmdk -O raw /disk/$FILE_NAME /disk/$OS_NAME.img; \
@@ -44,5 +43,8 @@ while [ $KEY_LOOP == "true" ]; do \
 		KEY_LOOP="false"; \
 	fi \
 done
+
+RUN yum install -y cloud-init cloud-utils
+
 # 	&& yum install -y cloud-utils genisoimage \
 #	&& cloud-localds /disk/$FILE_NAME /mnt/custom/user-data
