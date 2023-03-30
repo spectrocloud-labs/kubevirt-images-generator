@@ -1,6 +1,6 @@
-FROM kubevirt/container-disk-v1alpha:v0.13.7
+FROM alpine:3.17.3
 
-LABEL maintainer="Juan Manuel Torres <juanmanuel.torres@aventurabinaria.es>"
+LABEL maintainer="Spectro Cloud <help@spectrocloud.com>"
 
 ARG OS_NAME="example_os"
 ARG OS_VERSION="0.0"
@@ -9,13 +9,9 @@ ARG FILE_NAME="os_xxx.img"
 ARG IMAGE_NAME="os_xxx"
 ARG IMAGE_EXTENSION="img"
 
-ADD custom /mnt/custom
-RUN echo "Download: $IMAGE_URL FILE: $FILE_NAME"; \
-	set -x \
-	&& yum update --releasever 28 -y \
-	&& yum install -y findutils --releasever 28
+RUN apk update && apk add curl cloud-init cloud-utils
 
-RUN curl -kfSL $IMAGE_URL -o /disk/$FILE_NAME ; if [ $? != 0 ]; then exit 1; fi 
+RUN mkdir /disk && curl -kfSL $IMAGE_URL -o /disk/$FILE_NAME
 
 RUN KEY_LOOP="true"; \
 while [ $KEY_LOOP == "true" ]; do \
@@ -43,8 +39,3 @@ while [ $KEY_LOOP == "true" ]; do \
 		KEY_LOOP="false"; \
 	fi \
 done
-
-RUN yum install -y cloud-init cloud-utils
-
-# 	&& yum install -y cloud-utils genisoimage \
-#	&& cloud-localds /disk/$FILE_NAME /mnt/custom/user-data
