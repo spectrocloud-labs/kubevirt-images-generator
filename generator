@@ -3,6 +3,7 @@
 set -e
 
 NAME_REGISTRY="gcr.io/spectro-common-dev/tylergillson"
+TARGETARCH=amd64
 
 LIST_IMAGES="\
 	ubuntu;22.10;https://cloud-images.ubuntu.com/kinetic/current/kinetic-server-cloudimg-amd64.img \
@@ -28,7 +29,7 @@ do
 	echo "OS:$OS_NAME VERSION:$OS_VERSION IMAGE:$IMAGE_URL"
 	echo "Build $NAME_REGISTRY/$NAME_IMAGE:$OS_VERSION"
 
-	docker build -f base/Dockerfile -t $NAME_REGISTRY/$NAME_IMAGE:$OS_VERSION \
+	docker build --platform linux/$TARGETARCH -f base/Dockerfile -t $NAME_REGISTRY/$NAME_IMAGE:$OS_VERSION \
 		--build-arg OS_NAME="$OS_NAME" \
 		--build-arg OS_VERSION="$OS_VERSION" \
 		--build-arg IMAGE_URL="$IMAGE_URL" \

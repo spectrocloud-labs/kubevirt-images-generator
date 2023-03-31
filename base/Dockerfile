@@ -42,5 +42,5 @@ done
 
 # ---
 
-FROM scratch
+FROM --platform=linux/amd64 scratch
 COPY --from=base /disk /disk
