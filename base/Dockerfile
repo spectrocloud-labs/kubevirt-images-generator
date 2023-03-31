@@ -1,4 +1,4 @@
-FROM alpine:3.17.3
+FROM --platform=linux/amd64 alpine:3.17.3 AS base
 
 LABEL maintainer="Spectro Cloud <help@spectrocloud.com>"
 
@@ -9,9 +9,9 @@ ARG FILE_NAME="os_xxx.img"
 ARG IMAGE_NAME="os_xxx"
 ARG IMAGE_EXTENSION="img"
 
-RUN apk update && apk add curl cloud-init cloud-utils
-
-RUN mkdir /disk && curl -kfSL $IMAGE_URL -o /disk/$FILE_NAME
+RUN apk update && apk add curl && \
+	mkdir /disk && \
+	curl -kfSL $IMAGE_URL -o /disk/$FILE_NAME
 
 RUN KEY_LOOP="true"; \
 while [ $KEY_LOOP == "true" ]; do \
@@ -39,3 +39,8 @@ while [ $KEY_LOOP == "true" ]; do \
 		KEY_LOOP="false"; \
 	fi \
 done
+
+# ---
+
+FROM scratch
+COPY --from=base /disk /disk
